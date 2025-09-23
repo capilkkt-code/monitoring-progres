@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoring Pelayanan Dukcapil</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .pulse-animation { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-4 sm:px-6 py-4">
+            <div class="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
+                <div class="flex items-center space-x-3 sm:space-x-4">
+                    <div class="bg-white bg-opacity-20 p-2 sm:p-3 rounded-lg flex-shrink-0">
+                        <img src="https://iili.io/K9rv7pt.png" alt="Logo DukCapil" class="w-8 h-8 sm:w-10 sm:h-10 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <i class="fas fa-chart-line text-xl sm:text-2xl hidden"></i>
+                    </div>
+                    <div class="text-center sm:text-left">
+                        <h1 class="text-lg sm:text-xl lg:text-2xl font-bold leading-tight">Monitoring Pelayanan Dukcapil</h1>
+                        <p class="text-xs sm:text-sm text-blue-100 mt-1">Dashboard Real-time Penerbitan Dokumen</p>
+                    </div>
+                </div>
+                <div class="text-center sm:text-right">
+                    <div class="text-xs sm:text-sm text-blue-100">Terakhir Update</div>
+                    <div class="font-semibold text-sm sm:text-base" id="lastUpdate"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-4 sm:px-6 py-4 sm:py-8">
+        <!-- Filter Cerdas -->
+        <div class="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 mb-6 sm:mb-8 border border-gray-100">
+            <div class="mb-4 sm:mb-6">
+                <h3 class="text-lg sm:text-xl font-bold text-gray-800 mb-2">Filter & Kontrol Data</h3>
+                <p class="text-sm sm:text-base text-gray-600">Kelola tampilan data berdasarkan kategori dan periode waktu</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                <!-- Filter Kategori -->
+                <div class="space-y-3 md:col-span-2 lg:col-span-1">
+                    <label class="text-sm font-semibold text-gray-700 flex items-center space-x-2">
+                        <i class="fas fa-filter text-blue-600"></i>
+                        <span>Filter Kategori</span>
+                    </label>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <button id="filterAll" class="px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium hover:bg-blue-700 transition-all duration-200 shadow-sm flex items-center justify-center">
+                            <i class="fas fa-th-large mr-1 sm:mr-2 text-xs sm:text-sm"></i>
+                            <span class="truncate">Semua</span>
+                        </button>
+                        <button id="filterKependudukan" class="px-3 sm:px-4 py-2 bg-gray-100 text-gray-700 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium hover:bg-gray-200 transition-all duration-200 flex items-center justify-center">
+                            <i class="fas fa-id-card mr-1 sm:mr-2 text-xs sm:text-sm"></i>
+                            <span class="truncate">Kependudukan</span>
+                        </button>
+                        <button id="filterSipil" class="px-3 sm:px-4 py-2 bg-gray-100 text-gray-700 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium hover:bg-gray-200 transition-all duration-200 flex items-center justify-center">
+                            <i class="fas fa-certificate mr-1 sm:mr-2 text-xs sm:text-sm"></i>
+                            <span class="truncate">Pencatatan Sipil</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filter Tanggal -->
+                <div class="space-y-3">
+                    <label class="text-sm font-semibold text-gray-700 flex items-center space-x-2">
+                        <i class="fas fa-calendar-alt text-green-600"></i>
+                        <span>Filter Tanggal</span>
+                    </label>
+                    <div class="flex flex-col space-y-2">
+                        <select id="dateFilter" class="border border-gray-300 rounded-lg sm:rounded-xl px-3 sm:px-4 py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white shadow-sm">
+                            <option value="today">Hari Ini</option>
+                            <option value="yesterday">Kemarin</option>
+                            <option value="week">7 Hari Terakhir</option>
+                            <option value="month">30 Hari Terakhir</option>
+                            <option value="custom">Pilih Tanggal</option>
+                        </select>
+                        <div id="customDateRange" class="hidden flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+                            <input type="date" id="startDate" class="border border-gray-300 rounded-lg px-3 py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-green-500 flex-1">
+                            <input type="date" id="endDate" class="border border-gray-300 rounded-lg px-3 py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-green-500 flex-1">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kontrol Aksi -->
+                <div class="space-y-3">
+                    <label class="text-sm font-semibold text-gray-700 flex items-center space-x-2">
+                        <i class="fas fa-cogs text-purple-600"></i>
+                        <span>Kontrol Aksi</span>
+                    </label>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <button id="refreshData" class="px-3 sm:px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium hover:from-green-700 hover:to-green-800 transition-all duration-200 flex items-center justify-center space-x-1 sm:space-x-2 shadow-sm">
+                            <i class="fas fa-sync-alt text-xs sm:text-sm"></i>
+                            <span class="truncate">Refresh Data</span>
+                        </button>
+                        <button id="exportData" class="px-3 sm:px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium hover:from-purple-700 hover:to-purple-800 transition-all duration-200 flex items-center justify-center space-x-1 sm:space-x-2 shadow-sm">
+                            <i class="fas fa-download text-xs sm:text-sm"></i>
+                            <span class="truncate">Export Data</span>
+                        </button>
+                        <button id="inputProgress" class="px-3 sm:px-4 py-2 bg-gradient-to-r from-orange-600 to-orange-700 text-white rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium hover:from-orange-700 hover:to-orange-800 transition-all duration-200 flex items-center justify-center space-x-1 sm:space-x-2 shadow-sm">
+                            <i class="fas fa-plus-circle text-xs sm:text-sm"></i>
+                            <span class="truncate">Input Progres</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Koneksi -->
+            <div class="mt-4 sm:mt-6 pt-4 border-t border-gray-200">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-y-0">
+                    <div class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-green-500 rounded-full pulse-animation"></div>
+                            <span class="text-xs sm:text-sm font-medium text-green-700">Terhubung ke Google Sheets</span>
+                        </div>
+                        <div class="hidden sm:block text-sm text-gray-500">|</div>
+                        <div class="text-xs sm:text-sm text-gray-600">
+                            <span id="dataCount">0</span> record tersedia
+                        </div>
+                    </div>
+                    <div class="text-xs sm:text-sm text-gray-500">
+                        Sinkronisasi otomatis setiap 30 detik
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+            <div class="bg-white rounded-lg sm:rounded-xl shadow-md p-4 sm:p-6 card-hover border-l-4 border-blue-500">
+                <div class="flex items-center justify-between">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-gray-600 text-xs sm:text-sm font-medium truncate">Total Dokumen Hari Ini</p>
+                        <p class="text-2xl sm:text-3xl font-bold text-gray-800" id="totalToday">0</p>
+                    </div>
+                    <div class="bg-blue-100 p-2 sm:p-3 rounded-full flex-shrink-0 ml-3">
+                        <i class="fas fa-file-alt text-blue-600 text-lg sm:text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg sm:rounded-xl shadow-md p-4 sm:p-6 card-hover border-l-4 border-green-500">
+                <div class="flex items-center justify-between">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-gray-600 text-xs sm:text-sm font-medium truncate">Dokumen Kependudukan</p>
+                        <p class="text-2xl sm:text-3xl font-bold text-gray-800" id="totalKependudukan">0</p>
+                    </div>
+                    <div class="bg-green-100 p-2 sm:p-3 rounded-full flex-shrink-0 ml-3">
+                        <i class="fas fa-id-card text-green-600 text-lg sm:text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg sm:rounded-xl shadow-md p-4 sm:p-6 card-hover border-l-4 border-purple-500">
+                <div class="flex items-center justify-between">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-gray-600 text-xs sm:text-sm font-medium truncate">Pencatatan Sipil</p>
+                        <p class="text-2xl sm:text-3xl font-bold text-gray-800" id="totalSipil">0</p>
+                    </div>
+                    <div class="bg-purple-100 p-2 sm:p-3 rounded-full flex-shrink-0 ml-3">
+                        <i class="fas fa-certificate text-purple-600 text-lg sm:text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg sm:rounded-xl shadow-md p-4 sm:p-6 card-hover border-l-4 border-orange-500">
+                <div class="flex items-center justify-between">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-gray-600 text-xs sm:text-sm font-medium truncate">Stok Blangko KTP-el</p>
+                        <p class="text-2xl sm:text-3xl font-bold text-gray-800" id="stokBlangko">0</p>
+                    </div>
+                    <div class="bg-orange-100 p-2 sm:p-3 rounded-full flex-shrink-0 ml-3">
+                        <i class="fas fa-warehouse text-orange-600 text-lg sm:text-xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="grid grid-cols-1 xl:grid-cols-4 gap-6 sm:gap-8">
+            <!-- Dokumen Kependudukan -->
+            <div class="xl:col-span-3">
+                <div class="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8 border border-gray-100">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 sm:mb-8">
+                        <div>
+                            <h2 class="text-xl sm:text-2xl font-bold text-gray-800 mb-2">Dokumen Kependudukan</h2>
+                            <p class="text-sm sm:text-base text-gray-600">Monitoring real-time penerbitan dokumen identitas</p>
+                        </div>
+                        <div class="flex items-center space-x-3 mt-4 sm:mt-0">
+                            <div class="flex items-center space-x-2 bg-green-50 px-3 py-2 rounded-full">
+                                <div class="w-3 h-3 bg-green-500 rounded-full pulse-animation"></div>
+                                <span class="text-xs sm:text-sm font-medium text-green-700">Live Update</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                        <div class="group bg-gradient-to-br from-blue-500 to-blue-600 p-4 sm:p-6 rounded-xl sm:rounded-2xl text-white card-hover transform transition-all duration-300 hover:scale-105">
+                            <div class="flex items-center justify-between">
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-blue-100 font-medium mb-1 text-sm sm:text-base truncate">Kartu Keluarga</p>
+                                    <p class="text-2xl sm:text-3xl font-bold" id="kk">0</p>
+                                    <div class="flex items-center mt-2">
+                                        <i class="fas fa-arrow-up text-xs mr-1"></i>
+                                        <span class="text-xs text-blue-100">+12% dari kemarin</span>
+                                    </div>
+                                </div>
+                                <div class="bg-white bg-opacity-20 p-3 sm:p-4 rounded-lg sm:rounded-xl flex-shrink-0 ml-3">
+                                    <i class="fas fa-users text-lg sm:text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="group bg-gradient-to-br from-emerald-500 to-emerald-600 p-4 sm:p-6 rounded-xl sm:rounded-2xl text-white card-hover transform transition-all duration-300 hover:scale-105">
+                            <div class="flex items-center justify-between">
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-emerald-100 font-medium mb-1 text-sm sm:text-base truncate">KTP Elektronik</p>
+                                    <p class="text-2xl sm:text-3xl font-bold" id="ktp">0</p>
+                                    <div class="flex items-center mt-2">
+                                        <i class="fas fa-arrow-up text-xs mr-1"></i>
+                                        <span class="text-xs text-emerald-100">+8% dari kemarin</span>
+                                    </div>
+                                </div>
+                                <div class="bg-white bg-opacity-20 p-3 sm:p-4 rounded-lg sm:rounded-xl flex-shrink-0 ml-3">
+                                    <i class="fas fa-id-card text-lg sm:text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="group bg-gradient-to-br from-amber-500 to-amber-600 p-4 sm:p-6 rounded-xl sm:rounded-2xl text-white card-hover transform transition-all duration-300 hover:scale-105">
+                            <div class="flex items-center justify-between">
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-amber-100 font-medium mb-1 text-sm sm:text-base truncate">Kartu Identitas Anak</p>
+                                    <p class="text-2xl sm:text-3xl font-bold" id="kia">0</p>
+                                    <div class="flex items-center mt-2">
+                                        <i class="fas fa-arrow-up text-xs mr-1"></i>
+                                        <span class="text-xs text-amber-100">+15% dari kemarin</span>
+                                    </div>
+                                </div>
+                                <div class="bg-white bg-opacity-20 p-3 sm:p-4 rounded-lg sm:rounded-xl flex-shrink-0 ml-3">
+                                    <i class="fas fa-child text-lg sm:text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="group bg-gradient-to-br from-indigo-500 to-indigo-600 p-4 sm:p-6 rounded-xl sm:rounded-2xl text-white card-hover transform transition-all duration-300 hover:scale-105">
+                            <div class="flex items-center justify-between">
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-indigo-100 font-medium mb-1 text-sm sm:text-base truncate">SKPWNI</p>
+                                    <p class="text-2xl sm:text-3xl font-bold" id="skpwni">0</p>
+                                    <div class="flex items-center mt-2">
+                                        <i class="fas fa-arrow-up text-xs mr-1"></i>
+                                        <span class="text-xs text-indigo-100">+5% dari kemarin</span>
+                                    </div>
+                                </div>
+                                <div class="bg-white bg-opacity-20 p-3 sm:p-4 rounded-lg sm:rounded-xl flex-shrink-0 ml-3">
+                                    <i class="fas fa-passport text-lg sm:text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="group bg-gradient-to-br from-pink-500 to-pink-600 p-4 sm:p-6 rounded-xl sm:rounded-2xl text-white card-hover transform transition-all duration-300 hover:scale-105 sm:col-span-2 lg:col-span-1">
+                            <div class="flex items-center justify-between">
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-pink-100 font-medium mb-1 text-sm sm:text-base truncate">SKDWNI</p>
+                                    <p class="text-2xl sm:text-3xl font-bold" id="skdwni">0</p>
+                                    <div class="flex items-center mt-2">
+                                        <i class="fas fa-arrow-up text-xs mr-1"></i>
+                                        <span class="text-xs text-pink-100">+3% dari kemarin</span>
+                                    </div>
+                                </div>
+                                <div class="bg-white bg-opacity-20 p-3 sm:p-4 rounded-lg sm:rounded-xl flex-shrink-0 ml-3">
+                                    <i class="fas fa-globe text-lg sm:text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dokumen Pencatatan Sipil -->
+                <div class="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 lg:p-8 border border-gray-100">
+                    <div class="mb-6 sm:mb-8">
+                        <h2 class="text-xl sm:text-2xl font-bold text-gray-800 mb-2">Dokumen Pencatatan Sipil</h2>
+                        <p class="text-sm sm:text-base text-gray-600">Monitoring pencatatan peristiwa penting kependudukan</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                        <div class="group bg-gradient-to-br from-teal-500 to-teal-600 p-4 sm:p-6 rounded-xl sm:rounded-2xl text-white card-hover transform transition-all duration-300 hover:scale-105">
+                            <div class="flex items-center justify-between">
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-teal-100 font-medium mb-1 text-sm sm:text-base truncate">Akta Kelahiran</p>
+                                    <p class="text-2xl sm:text-3xl font-bold" id="aktaLahir">0</p>
+                                    <div class="flex items-center mt-2">
+                                        <i class="fas fa-arrow-up text-xs mr-1"></i>
+                                        <span class="text-xs text-teal-100">+18% dari kemarin</span>
+                                    </div>
+                                </div>
+                                <div class="bg-white bg-opacity-20 p-3 sm:p-4 rounded-lg sm:rounded-xl flex-shrink-0 ml-3">
+                                    <i class="fas fa-baby text-lg sm:text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="group bg-gradient-to-br from-red-500 to-red-600 p-4 sm:p-6 rounded-xl sm:rounded-2xl text-white card-hover transform transition-all duration-300 hover:scale-105">
+                            <div class="flex items-center justify-between">
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-red-100 font-medium mb-1 text-sm sm:text-base truncate">Akta Kematian</p>
+                                    <p class="text-2xl sm:text-3xl font-bold" id="aktaMati">0</p>
+                                    <div class="flex items-center mt-2">
+                                        <i class="fas fa-minus text-xs mr-1"></i>
+                                        <span class="text-xs text-red-100">-2% dari kemarin</span>
+                                    </div>
+                                </div>
+                                <div class="bg-white bg-opacity-20 p-3 sm:p-4 rounded-lg sm:rounded-xl flex-shrink-0 ml-3">
+                                    <i class="fas fa-cross text-lg sm:text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="group bg-gradient-to-br from-rose-500 to-rose-600 p-4 sm:p-6 rounded-xl sm:rounded-2xl text-white card-hover transform transition-all duration-300 hover:scale-105">
+                            <div class="flex items-center justify-between">
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-rose-100 font-medium mb-1 text-sm sm:text-base truncate">Akta Perkawinan</p>
+                                    <p class="text-2xl sm:text-3xl font-bold" id="aktaKawin">0</p>
+                                    <div class="flex items-center mt-2">
+                                        <i class="fas fa-arrow-up text-xs mr-1"></i>
+                                        <span class="text-xs text-rose-100">+25% dari kemarin</span>
+                                    </div>
+                                </div>
+                                <div class="bg-white bg-opacity-20 p-3 sm:p-4 rounded-lg sm:rounded-xl flex-shrink-0 ml-3">
+                                    <i class="fas fa-heart text-lg sm:text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="group bg-gradient-to-br from-slate-500 to-slate-600 p-4 sm:p-6 rounded-xl sm:rounded-2xl text-white card-hover transform transition-all duration-300 hover:scale-105">
+                            <div class="flex items-center justify-between">
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-slate-100 font-medium mb-1 text-sm sm:text-base truncate">Akta Perceraian</p>
+                                    <p class="text-2xl sm:text-3xl font-bold" id="aktaCerai">0</p>
+                                    <div class="flex items-center mt-2">
+                                        <i class="fas fa-arrow-down text-xs mr-1"></i>
+                                        <span class="text-xs text-slate-100">-5% dari kemarin</span>
+                                    </div>
+                                </div>
+                                <div class="bg-white bg-opacity-20 p-3 sm:p-4 rounded-lg sm:rounded-xl flex-shrink-0 ml-3">
+                                    <i class="fas fa-broken-heart text-lg sm:text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="xl:col-span-1 space-y-4 sm:space-y-6">
+                <!-- Status Blangko -->
+                <div class="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 border border-gray-100">
+                    <div class="mb-4 sm:mb-6">
+                        <h3 class="text-base sm:text-lg font-bold text-gray-800 mb-2">Status Ketersediaan Blangko</h3>
+                        <p class="text-xs sm:text-sm text-gray-600">Monitoring stok blangko KTP-el</p>
+                    </div>
+                    
+                    <div class="space-y-4 sm:space-y-6">
+                        <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-3 sm:p-4 rounded-lg sm:rounded-xl border border-green-200">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center space-x-2 sm:space-x-3">
+                                    <div class="w-3 h-3 sm:w-4 sm:h-4 bg-green-500 rounded-full"></div>
+                                    <span class="font-semibold text-gray-800 text-sm sm:text-base">KTP Elektronik</span>
+                                </div>
+                                <span class="font-bold text-green-700 text-base sm:text-lg" id="blangkoKTP">5,240</span>
+                            </div>
+                            <div class="text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full inline-block">
+                                <i class="fas fa-check-circle mr-1"></i>
+                                Stok Aman
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 p-3 sm:p-4 rounded-lg sm:rounded-xl">
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="text-xs sm:text-sm font-semibold text-gray-700">Penggunaan Hari Ini</span>
+                                <span class="text-base sm:text-lg font-bold text-gray-800" id="penggunaanHariIni">0</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2 sm:h-3 mb-2">
+                                <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-2 sm:h-3 rounded-full transition-all duration-500 shadow-sm" id="progressBar" style="width: 0%"></div>
+                            </div>
+                            <div class="flex justify-between text-xs text-gray-500">
+                                <span>0</span>
+                                <span class="font-medium">Target: 200/hari</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Login Protection -->
+    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl sm:rounded-2xl shadow-2xl max-w-md w-full mx-4">
+            <div class="p-4 sm:p-6 lg:p-8">
+                <div class="text-center mb-4 sm:mb-6">
+                    <div class="bg-blue-100 w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                        <i class="fas fa-lock text-blue-600 text-lg sm:text-2xl"></i>
+                    </div>
+                    <h2 class="text-xl sm:text-2xl font-bold text-gray-800 mb-2">Akses Terbatas</h2>
+                    <p class="text-sm sm:text-base text-gray-600">Masukkan username dan password untuk mengakses form input progres</p>
+                </div>
+
+                <form id="loginForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-user text-blue-600 mr-2"></i>Username
+                        </label>
+                        <input type="text" id="loginUsername" required 
+                            class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Masukkan username">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-key text-blue-600 mr-2"></i>Password
+                        </label>
+                        <div class="relative">
+                            <input type="password" id="loginPassword" required 
+                                class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 pr-12"
+                                placeholder="Masukkan password">
+                            <button type="button" id="togglePassword" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="loginError" class="hidden bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        Username atau password salah. Silakan coba lagi.
+                    </div>
+
+                    <div class="flex justify-end space-x-4 pt-4">
+                        <button type="button" id="cancelLogin" class="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-colors">
+                            Batal
+                        </button>
+                        <button type="submit" id="submitLogin" class="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-medium hover:from-blue-700 hover:to-blue-800 transition-all duration-200 flex items-center space-x-2">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>Masuk</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Input Progres -->
+    <div id="inputModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl sm:rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto mx-4">
+            <div class="p-4 sm:p-6 lg:p-8">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800">Input Progres Harian</h2>
+                        <p class="text-gray-600 mt-1">Masukkan data progres dokumen hari ini</p>
+                    </div>
+                    <button id="closeModal" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+
+                <form id="progressForm" class="space-y-6">
+                    <!-- Tanggal -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                <i class="fas fa-calendar-alt text-blue-600 mr-2"></i>Tanggal
+                            </label>
+                            <input type="date" id="inputTanggal" required 
+                                class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                <i class="fas fa-warehouse text-orange-600 mr-2"></i>Ketersediaan Blangko KTP-el
+                            </label>
+                            <input type="number" id="inputBlangko" min="0" required 
+                                class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                                placeholder="Masukkan jumlah stok blangko">
+                        </div>
+                    </div>
+
+                    <!-- Dokumen Kependudukan -->
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-id-card text-green-600 mr-2"></i>
+                            Dokumen Kependudukan
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Kartu Keluarga</label>
+                                <input type="number" id="inputKK" min="0" required 
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    placeholder="0">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">KTP Elektronik</label>
+                                <input type="number" id="inputKTP" min="0" required 
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                                    placeholder="0">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Kartu Identitas Anak</label>
+                                <input type="number" id="inputKIA" min="0" required 
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                                    placeholder="0">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">SKPWNI</label>
+                                <input type="number" id="inputSKPWNI" min="0" required 
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                    placeholder="0">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">SKDWNI</label>
+                                <input type="number" id="inputSKDWNI" min="0" required 
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
+                                    placeholder="0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dokumen Pencatatan Sipil -->
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-certificate text-purple-600 mr-2"></i>
+                            Dokumen Pencatatan Sipil
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Akta Kelahiran</label>
+                                <input type="number" id="inputAktaLahir" min="0" required 
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                                    placeholder="0">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Akta Kematian</label>
+                                <input type="number" id="inputAktaMati" min="0" required 
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                                    placeholder="0">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Akta Perkawinan</label>
+                                <input type="number" id="inputAktaKawin" min="0" required 
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-rose-500"
+                                    placeholder="0">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Akta Perceraian</label>
+                                <input type="number" id="inputAktaCerai" min="0" required 
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500"
+                                    placeholder="0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tombol Submit -->
+                    <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+                        <button type="button" id="cancelForm" class="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-colors">
+                            Batal
+                        </button>
+                        <button type="submit" id="submitForm" class="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-medium hover:from-blue-700 hover:to-blue-800 transition-all duration-200 flex items-center space-x-2">
+                            <i class="fas fa-save"></i>
+                            <span>Simpan Data</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gradient-to-r from-slate-700 to-slate-800 text-white mt-16">
+        <div class="container mx-auto px-6 py-8">
+            <div class="text-center">
+                <p class="text-slate-300 text-sm font-medium">
+                    © 2025 DukCapil Kabupaten Kepulauan Tanimbar. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Data dari Google Sheets
+        let allData = [];
+        let filteredData = [];
+        let currentData = {
+            kk: 0,
+            ktp: 0,
+            kia: 0,
+            skpwni: 0,
+            skdwni: 0,
+            aktaLahir: 0,
+            aktaMati: 0,
+            aktaKawin: 0,
+            aktaCerai: 0,
+            blangkoKTP: 0
+        };
+
+
+
+        // URL Google Sheets CSV
+        const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRNXXv7oVIxIqloazDDhzaX6nFHnmxufaHxjDUuhqL724aAZGmgEZi_IhX_rL8ZpWAbYTDgBo0mqCn6/pub?gid=0&single=true&output=csv';
+
+        // Fungsi untuk mengambil data dari Google Sheets
+        async function fetchDataFromSheets() {
+            try {
+                showNotification('Mengambil data terbaru...', 'info');
+                
+                const response = await fetch(SHEET_URL);
+                const csvText = await response.text();
+                
+                // Parse CSV
+                const rows = csvText.split('\n');
+                const headers = rows[0].split(',').map(h => h.trim().toLowerCase());
+                
+                allData = [];
+                for (let i = 1; i < rows.length; i++) {
+                    if (rows[i].trim()) {
+                        const values = rows[i].split(',');
+                        const rowData = {};
+                        
+                        headers.forEach((header, index) => {
+                            let value = values[index] ? values[index].trim() : '';
+                            
+                            // Parse tanggal
+                            if (header === 'tanggal') {
+                                rowData.tanggal = new Date(value);
+                            } else {
+                                // Parse angka
+                                rowData[header] = parseInt(value) || 0;
+                            }
+                        });
+                        
+                        allData.push(rowData);
+                    }
+                }
+                
+                // Sort by date (newest first)
+                allData.sort((a, b) => b.tanggal - a.tanggal);
+                
+                // Update date filter options
+                updateDateFilterOptions();
+                
+                // Apply current filter
+                applyDateFilter();
+                
+                showNotification('Data berhasil diperbarui dari Google Sheets!', 'success');
+                
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                showNotification('Gagal mengambil data. Menggunakan data lokal.', 'error');
+                
+                // Fallback to sample data
+                generateSampleData();
+            }
+        }
+
+        // Fungsi untuk generate sample data jika gagal fetch
+        function generateSampleData() {
+            const today = new Date();
+            allData = [];
+            
+            for (let i = 0; i < 30; i++) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                
+                allData.push({
+                    tanggal: date,
+                    'kartu keluarga': Math.floor(Math.random() * 25) + 35,
+                    'ktp elektronik': Math.floor(Math.random() * 50) + 80,
+                    'kartu identitas anak': Math.floor(Math.random() * 20) + 15,
+                    'skpwni': Math.floor(Math.random() * 10) + 5,
+                    'skdwni': Math.floor(Math.random() * 8) + 3,
+                    'akta kelahiran': Math.floor(Math.random() * 30) + 40,
+                    'akta kematian': Math.floor(Math.random() * 15) + 8,
+                    'akta perkawinan': Math.floor(Math.random() * 20) + 15,
+                    'akta perceraian': Math.floor(Math.random() * 8) + 3,
+                    'ketersediaan blangko ktp el': 5240 - (i * 5)
+                });
+            }
+            
+            updateDateFilterOptions();
+            applyDateFilter();
+        }
+
+        // Fungsi untuk update date filter options
+        function updateDateFilterOptions() {
+            const dateFilter = document.getElementById('dateFilter');
+            const currentValue = dateFilter.value;
+            
+            // Keep existing options, just update data count
+            document.getElementById('dataCount').textContent = allData.length;
+        }
+
+        // Fungsi untuk apply date filter
+        function applyDateFilter() {
+            const filterValue = document.getElementById('dateFilter').value;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            let startDate, endDate;
+            
+            switch (filterValue) {
+                case 'today':
+                    startDate = new Date(today);
+                    endDate = new Date(today);
+                    endDate.setHours(23, 59, 59, 999);
+                    break;
+                case 'yesterday':
+                    startDate = new Date(today);
+                    startDate.setDate(startDate.getDate() - 1);
+                    endDate = new Date(startDate);
+                    endDate.setHours(23, 59, 59, 999);
+                    break;
+                case 'week':
+                    startDate = new Date(today);
+                    startDate.setDate(startDate.getDate() - 7);
+                    endDate = new Date(today);
+                    endDate.setHours(23, 59, 59, 999);
+                    break;
+                case 'month':
+                    startDate = new Date(today);
+                    startDate.setDate(startDate.getDate() - 30);
+                    endDate = new Date(today);
+                    endDate.setHours(23, 59, 59, 999);
+                    break;
+                case 'custom':
+                    const startInput = document.getElementById('startDate').value;
+                    const endInput = document.getElementById('endDate').value;
+                    if (startInput && endInput) {
+                        startDate = new Date(startInput);
+                        endDate = new Date(endInput);
+                        endDate.setHours(23, 59, 59, 999);
+                    } else {
+                        return;
+                    }
+                    break;
+                default:
+                    startDate = new Date(today);
+                    endDate = new Date(today);
+                    endDate.setHours(23, 59, 59, 999);
+            }
+            
+            // Filter data berdasarkan tanggal
+            filteredData = allData.filter(item => {
+                const itemDate = new Date(item.tanggal);
+                return itemDate >= startDate && itemDate <= endDate;
+            });
+            
+            // Aggregate data
+            aggregateData();
+            updateDisplay();
+        }
+
+        // Fungsi untuk aggregate data
+        function aggregateData() {
+            if (filteredData.length === 0) {
+                // Reset to zero if no data
+                currentData = {
+                    kk: 0,
+                    ktp: 0,
+                    kia: 0,
+                    skpwni: 0,
+                    skdwni: 0,
+                    aktaLahir: 0,
+                    aktaMati: 0,
+                    aktaKawin: 0,
+                    aktaCerai: 0,
+                    blangkoKTP: 0
+                };
+                return;
+            }
+            
+            // Sum all filtered data using correct column names
+            currentData = {
+                kk: filteredData.reduce((sum, item) => sum + (item['kartu keluarga'] || 0), 0),
+                ktp: filteredData.reduce((sum, item) => sum + (item['ktp elektronik'] || 0), 0),
+                kia: filteredData.reduce((sum, item) => sum + (item['kartu identitas anak'] || 0), 0),
+                skpwni: filteredData.reduce((sum, item) => sum + (item['skpwni'] || 0), 0),
+                skdwni: filteredData.reduce((sum, item) => sum + (item['skdwni'] || 0), 0),
+                aktaLahir: filteredData.reduce((sum, item) => sum + (item['akta kelahiran'] || 0), 0),
+                aktaMati: filteredData.reduce((sum, item) => sum + (item['akta kematian'] || 0), 0),
+                aktaKawin: filteredData.reduce((sum, item) => sum + (item['akta perkawinan'] || 0), 0),
+                aktaCerai: filteredData.reduce((sum, item) => sum + (item['akta perceraian'] || 0), 0),
+                blangkoKTP: filteredData.length > 0 ? (filteredData[0]['ketersediaan blangko ktp el'] || 0) : 0
+            };
+        }
+
+        // Fungsi update display
+        function updateDisplay() {
+            // Update tampilan
+            document.getElementById('kk').textContent = currentData.kk;
+            document.getElementById('ktp').textContent = currentData.ktp;
+            document.getElementById('kia').textContent = currentData.kia;
+            document.getElementById('skpwni').textContent = currentData.skpwni;
+            document.getElementById('skdwni').textContent = currentData.skdwni;
+            document.getElementById('aktaLahir').textContent = currentData.aktaLahir;
+            document.getElementById('aktaMati').textContent = currentData.aktaMati;
+            document.getElementById('aktaKawin').textContent = currentData.aktaKawin;
+            document.getElementById('aktaCerai').textContent = currentData.aktaCerai;
+            document.getElementById('blangkoKTP').textContent = currentData.blangkoKTP.toLocaleString();
+            document.getElementById('stokBlangko').textContent = currentData.blangkoKTP.toLocaleString();
+
+            // Update summary cards
+            const totalKependudukan = currentData.kk + currentData.ktp + currentData.kia + currentData.skpwni + currentData.skdwni;
+            const totalSipil = currentData.aktaLahir + currentData.aktaMati + currentData.aktaKawin + currentData.aktaCerai;
+            const totalToday = totalKependudukan + totalSipil;
+
+            document.getElementById('totalKependudukan').textContent = totalKependudukan;
+            document.getElementById('totalSipil').textContent = totalSipil;
+            document.getElementById('totalToday').textContent = totalToday;
+
+            // Update progress bar
+            const penggunaan = currentData.ktp;
+            const target = 200;
+            const percentage = Math.min((penggunaan / target) * 100, 100);
+            document.getElementById('penggunaanHariIni').textContent = penggunaan;
+            document.getElementById('progressBar').style.width = percentage + '%';
+
+
+
+            // Update waktu
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('id-ID');
+        }
+
+        // Fungsi animasi hover untuk cards
+        function addCardAnimations() {
+            const cards = document.querySelectorAll('.group');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.05) translateY(-5px)';
+                });
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1) translateY(0)';
+                });
+            });
+        }
+
+        // Event listener untuk filter kategori
+        const filterButtons = {
+            filterAll: 'all',
+            filterKependudukan: 'kependudukan',
+            filterSipil: 'sipil'
+        };
+
+        Object.keys(filterButtons).forEach(buttonId => {
+            document.getElementById(buttonId).addEventListener('click', function() {
+                // Update button states
+                Object.keys(filterButtons).forEach(id => {
+                    const btn = document.getElementById(id);
+                    btn.classList.remove('bg-blue-600', 'text-white');
+                    btn.classList.add('bg-gray-200', 'text-gray-700');
+                });
+                
+                this.classList.remove('bg-gray-200', 'text-gray-700');
+                this.classList.add('bg-blue-600', 'text-white');
+
+                // Apply filter
+                applyFilter(filterButtons[buttonId]);
+            });
+        });
+
+        // Fungsi apply filter
+        function applyFilter(filterType) {
+            const kependudukanCards = document.querySelectorAll('#kk, #ktp, #kia, #skpwni, #skdwni').map(el => el.closest('.bg-gradient-to-r').parentElement);
+            const sipilCards = document.querySelectorAll('#aktaLahir, #aktaMati, #aktaKawin, #aktaCerai').map(el => el.closest('.bg-gradient-to-r').parentElement);
+            
+            const kependudukanSection = document.querySelector('.bg-white.rounded-xl.shadow-md.p-6.mb-8');
+            const sipilSection = document.querySelector('.bg-white.rounded-xl.shadow-md.p-6:not(.mb-8)');
+
+            if (filterType === 'all') {
+                kependudukanSection.style.display = 'block';
+                sipilSection.style.display = 'block';
+            } else if (filterType === 'kependudukan') {
+                kependudukanSection.style.display = 'block';
+                sipilSection.style.display = 'none';
+            } else if (filterType === 'sipil') {
+                kependudukanSection.style.display = 'none';
+                sipilSection.style.display = 'block';
+            }
+        }
+
+        // Event listener untuk date filter
+        document.getElementById('dateFilter').addEventListener('change', function(e) {
+            const value = e.target.value;
+            const customRange = document.getElementById('customDateRange');
+            
+            if (value === 'custom') {
+                customRange.classList.remove('hidden');
+                // Set default dates
+                const today = new Date();
+                const weekAgo = new Date(today);
+                weekAgo.setDate(weekAgo.getDate() - 7);
+                
+                document.getElementById('endDate').value = today.toISOString().split('T')[0];
+                document.getElementById('startDate').value = weekAgo.toISOString().split('T')[0];
+            } else {
+                customRange.classList.add('hidden');
+                applyDateFilter();
+            }
+        });
+
+        // Event listener untuk custom date range
+        document.getElementById('startDate').addEventListener('change', applyDateFilter);
+        document.getElementById('endDate').addEventListener('change', applyDateFilter);
+
+        // Event listener untuk refresh data
+        document.getElementById('refreshData').addEventListener('click', function() {
+            const icon = this.querySelector('i');
+            icon.classList.add('fa-spin');
+            
+            setTimeout(() => {
+                fetchDataFromSheets();
+                icon.classList.remove('fa-spin');
+            }, 1000);
+        });
+
+        // Event listener untuk export data
+        document.getElementById('exportData').addEventListener('click', function() {
+            exportToCSV();
+        });
+
+        // Event listener untuk input progress
+        document.getElementById('inputProgress').addEventListener('click', function() {
+            openLoginModal();
+        });
+
+        // Event listeners untuk login modal
+        document.getElementById('cancelLogin').addEventListener('click', closeLoginModal);
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            handleLogin();
+        });
+        
+        // Toggle password visibility
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('loginPassword');
+            const icon = this.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+
+        // Close login modal when clicking outside
+        document.getElementById('loginModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeLoginModal();
+            }
+        });
+
+        // Event listeners untuk modal
+        document.getElementById('closeModal').addEventListener('click', closeInputModal);
+        document.getElementById('cancelForm').addEventListener('click', closeInputModal);
+        
+        // Close modal when clicking outside
+        document.getElementById('inputModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeInputModal();
+            }
+        });
+
+        // Form submission
+        document.getElementById('progressForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            submitProgressData();
+        });
+
+        // Fungsi export to Google Sheets Database
+        function exportToCSV() {
+            showNotification('Membuka database Google Sheets...', 'info');
+            
+            // Buka Google Sheets database di tab baru
+            const sheetsUrl = 'https://docs.google.com/spreadsheets/d/1hRAsKF_2XSrMwsnJevPJyFMBqleOwNdFgmQwFYpqQ_o/edit?usp=sharing';
+            window.open(sheetsUrl, '_blank', 'noopener,noreferrer');
+            
+            showNotification('Database Google Sheets berhasil dibuka!', 'success');
+        }
+
+        // URL untuk mengirim data ke Google Sheets
+        const SUBMIT_URL = 'https://script.google.com/macros/s/AKfycby8fer-K-ZYt0YcJr1uzG6qAQ7a_AvGHfO5kFRgQ1ahWIxiUDp4tb81mh7j9gbu04U3/exec';
+
+        // Kredensial login
+        const LOGIN_CREDENTIALS = {
+            <script>
+            <!-- code by https://www.html-code-generator.com -->
+            document.write(unescape('%75%73%65%72%6E%61%6D%65%3A%20%27%64%75%6B%63%61%70%69%6C%74%61%6E%69%6D%62%61%72%27%2C%0A%70%61%73%73%77%6F%72%64%3A%20%27%31%32%33%34%35%36%37%38%27'));
+            </script>
+        };
+
+        // Fungsi untuk membuka modal login
+        function openLoginModal() {
+            const modal = document.getElementById('loginModal');
+            modal.classList.remove('hidden');
+            
+            // Reset form login
+            document.getElementById('loginForm').reset();
+            document.getElementById('loginError').classList.add('hidden');
+            
+            // Focus ke username input
+            setTimeout(() => {
+                document.getElementById('loginUsername').focus();
+            }, 100);
+        }
+
+        // Fungsi untuk menutup modal login
+        function closeLoginModal() {
+            const modal = document.getElementById('loginModal');
+            modal.classList.add('hidden');
+            document.getElementById('loginForm').reset();
+            document.getElementById('loginError').classList.add('hidden');
+        }
+
+        // Fungsi untuk handle login
+        function handleLogin() {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const errorDiv = document.getElementById('loginError');
+            
+            // Validasi kredensial
+            if (username === LOGIN_CREDENTIALS.username && password === LOGIN_CREDENTIALS.password) {
+                // Login berhasil
+                closeLoginModal();
+                showNotification('Login berhasil! Membuka form input progres...', 'success');
+                
+                // Buka modal input progres setelah delay singkat
+                setTimeout(() => {
+                    openInputModal();
+                }, 500);
+            } else {
+                // Login gagal
+                errorDiv.classList.remove('hidden');
+                
+                // Shake animation untuk form
+                const form = document.getElementById('loginForm');
+                form.style.animation = 'shake 0.5s ease-in-out';
+                setTimeout(() => {
+                    form.style.animation = '';
+                }, 500);
+                
+                // Clear password field
+                document.getElementById('loginPassword').value = '';
+                document.getElementById('loginPassword').focus();
+            }
+        }
+
+        // Fungsi untuk membuka modal input
+        function openInputModal() {
+            const modal = document.getElementById('inputModal');
+            modal.classList.remove('hidden');
+            
+            // Set tanggal hari ini sebagai default
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('inputTanggal').value = today;
+            
+            // Reset form
+            document.getElementById('progressForm').reset();
+            document.getElementById('inputTanggal').value = today;
+        }
+
+        // Fungsi untuk menutup modal input
+        function closeInputModal() {
+            const modal = document.getElementById('inputModal');
+            modal.classList.add('hidden');
+            document.getElementById('progressForm').reset();
+        }
+
+        // Fungsi untuk submit data progres
+        async function submitProgressData() {
+            const submitButton = document.getElementById('submitForm');
+            const originalText = submitButton.innerHTML;
+            
+            // Disable button dan show loading
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Menyimpan...';
+            
+            try {
+                // Ambil data dari form
+                const formData = {
+                    tanggal: document.getElementById('inputTanggal').value,
+                    kartuKeluarga: parseInt(document.getElementById('inputKK').value) || 0,
+                    ktpElektronik: parseInt(document.getElementById('inputKTP').value) || 0,
+                    kartuIdentitasAnak: parseInt(document.getElementById('inputKIA').value) || 0,
+                    skpwni: parseInt(document.getElementById('inputSKPWNI').value) || 0,
+                    skdwni: parseInt(document.getElementById('inputSKDWNI').value) || 0,
+                    aktaKelahiran: parseInt(document.getElementById('inputAktaLahir').value) || 0,
+                    aktaKematian: parseInt(document.getElementById('inputAktaMati').value) || 0,
+                    aktaPerkawinan: parseInt(document.getElementById('inputAktaKawin').value) || 0,
+                    aktaPerceraian: parseInt(document.getElementById('inputAktaCerai').value) || 0,
+                    ketersediaanBlangkoKtpEl: parseInt(document.getElementById('inputBlangko').value) || 0
+                };
+
+                // Kirim data ke Google Sheets
+                const response = await fetch(SUBMIT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                // Karena mode no-cors, kita tidak bisa membaca response
+                // Jadi kita asumsikan berhasil jika tidak ada error
+                showNotification('Data berhasil disimpan ke Google Sheets!', 'success');
+                closeInputModal();
+                
+                // Refresh data setelah 2 detik
+                setTimeout(() => {
+                    fetchDataFromSheets();
+                }, 2000);
+                
+            } catch (error) {
+                console.error('Error submitting data:', error);
+                showNotification('Gagal menyimpan data. Silakan coba lagi.', 'error');
+            } finally {
+                // Restore button
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalText;
+            }
+        }
+
+        // Fungsi show notification
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 transition-all duration-300 ${
+                type === 'success' ? 'bg-green-500 text-white' : 
+                type === 'info' ? 'bg-blue-500 text-white' : 
+                'bg-red-500 text-white'
+            }`;
+            notification.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'info' ? 'fa-info-circle' : 'fa-exclamation-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Inisialisasi aplikasi
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load data pertama kali
+            fetchDataFromSheets();
+            addCardAnimations();
+            
+            // Auto refresh setiap 30 detik
+            setInterval(() => {
+                fetchDataFromSheets();
+            }, 30000);
+        });
+
+        // Load data immediately if DOM is already loaded
+        if (document.readyState === 'loading') {
+            // DOM is still loading
+        } else {
+            // DOM is already loaded
+            fetchDataFromSheets();
+            addCardAnimations();
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98382ee594364097',t:'MTc1ODYxMTAxNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
