@@ -21,9 +21,409 @@
 <body class="bg-gray-50 min-h-screen">
 
 
-    <div class="container mx-auto px-4 sm:px-6 py-4 sm:py-8">
-        <!-- Filter Cerdas -->
-        <div class="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 mb-6 sm:mb-8 border border-gray-100">
+    <!-- Header Section -->
+    <header class="gradient-bg shadow-lg">
+        <div class="container mx-auto px-4 sm:px-6 py-4 sm:py-6 lg:py-8">
+            <!-- Mobile Layout -->
+            <div class="block lg:hidden">
+                <!-- Logo - Centered and Larger -->
+                <div class="text-center mb-4">
+                    <div class="bg-white bg-opacity-20 p-4 rounded-2xl backdrop-blur-sm inline-block">
+                        <img src="https://iili.io/K9rv7pt.png" alt="Logo Dukcapil" class="w-16 h-16 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <i class="fas fa-building text-4xl text-white" style="display: none;"></i>
+                    </div>
+                </div>
+                
+                <!-- Dashboard Monitoring -->
+                <div class="text-center mb-3">
+                    <h1 class="text-xl font-bold text-white leading-tight">
+                        Dashboard Monitoring
+                    </h1>
+                </div>
+                
+                <!-- Dinas Kependudukan -->
+                <div class="text-center mb-3">
+                    <h2 class="text-base font-semibold text-blue-100 leading-tight">
+                        Dinas Kependudukan dan Pencatatan Sipil<br>Kabupaten Kepulauan Tanimbar
+                    </h2>
+                </div>
+                
+                <!-- Pelayanan Administrasi -->
+                <div class="text-center mb-4">
+                    <p class="text-sm text-blue-200 font-medium">
+                        Pelayanan Administrasi Kependudukan & Pencatatan Sipil
+                    </p>
+                </div>
+                
+                <!-- Jam dan Tanggal Sistem -->
+                <div class="text-center mb-4">
+                    <div class="bg-white bg-opacity-15 rounded-lg px-4 py-3 backdrop-blur-sm inline-block">
+                        <div class="flex items-center justify-center space-x-4">
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-clock text-white text-sm"></i>
+                                <span class="text-sm font-medium text-white" id="currentTime">--:--</span>
+                            </div>
+                            <div class="w-px h-4 bg-white bg-opacity-30"></div>
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-calendar text-white text-sm"></i>
+                                <span class="text-sm font-medium text-white" id="currentDate">-- --- ----</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Status Database -->
+                <div class="text-center">
+                    <div class="bg-white bg-opacity-15 rounded-lg px-4 py-2 backdrop-blur-sm inline-block">
+                        <div class="flex items-center justify-center space-x-2">
+                            <div class="w-2.5 h-2.5 bg-green-400 rounded-full pulse-animation"></div>
+                            <span class="text-sm font-medium text-white">Terhubung Ke Database</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Desktop Layout -->
+            <div class="hidden lg:flex items-center justify-between">
+                <div class="flex items-center space-x-6">
+                    <!-- Logo/Icon -->
+                    <div class="bg-white bg-opacity-20 p-4 rounded-2xl backdrop-blur-sm">
+                        <img src="https://iili.io/K9rv7pt.png" alt="Logo Dukcapil" class="w-20 h-20 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <i class="fas fa-building text-5xl text-white" style="display: none;"></i>
+                    </div>
+                    
+                    <!-- Title -->
+                    <div>
+                        <h1 class="text-3xl xl:text-4xl font-bold text-white leading-tight">
+                            Realtime Pelayanan Administrasi Kependudukan
+                        </h1>
+                        <h2 class="text-2xl font-semibold text-blue-100 mt-1">
+                            dan Pencatatan Sipil Kabupaten Kepulauan Tanimbar
+                        </h2>
+                        <p class="text-base text-blue-200 mt-2 font-medium">
+                            <i class="fas fa-chart-line mr-2"></i>
+                            Dashboard Monitoring Real-time • Update Otomatis
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Status & Info -->
+                <div class="flex flex-col space-y-3">
+                    <!-- Live Status -->
+                    <div class="bg-white bg-opacity-20 px-4 py-2 rounded-full backdrop-blur-sm">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-green-400 rounded-full pulse-animation"></div>
+                            <span class="text-sm font-medium text-white">LIVE</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Current Time -->
+                    <div class="bg-white bg-opacity-20 px-4 py-2 rounded-full backdrop-blur-sm">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-clock text-white text-sm"></i>
+                            <span class="text-sm font-medium text-white" id="currentTime">--:--</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Current Date -->
+                    <div class="bg-white bg-opacity-20 px-4 py-2 rounded-full backdrop-blur-sm">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-calendar text-white text-sm"></i>
+                            <span class="text-sm font-medium text-white" id="currentDate">-- --- ----</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile App Container -->
+    <div class="lg:container lg:mx-auto lg:px-4 lg:py-8">
+        <!-- Mobile App Layout -->
+        <div class="lg:hidden">
+            <!-- Mobile Navigation Bar -->
+            <div class="bg-white border-b border-gray-200 px-4 py-3 sticky top-0 z-40">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-chart-line text-white text-sm"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-lg font-bold text-gray-800">Dashboard</h1>
+                            <p class="text-xs text-gray-500">Monitoring Real-time</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button id="mobileRefresh" class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center">
+                            <i class="fas fa-sync-alt text-blue-600 text-sm"></i>
+                        </button>
+                        <button id="mobileMenu" class="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center">
+                            <i class="fas fa-ellipsis-v text-gray-600 text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Status Bar -->
+            <div class="bg-gradient-to-r from-green-50 to-blue-50 px-4 py-3 border-b border-gray-100">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-2 h-2 bg-green-500 rounded-full pulse-animation"></div>
+                        <span class="text-xs font-medium text-green-700">Database Terhubung</span>
+                    </div>
+                    <div class="text-xs text-gray-600" id="mobileDateTime">--:-- | -- --- ----</div>
+                </div>
+            </div>
+
+            <!-- Mobile Summary Cards -->
+            <div class="px-4 py-4 bg-gray-50">
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                        <div class="text-center">
+                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                                <i class="fas fa-file-alt text-blue-600 text-lg"></i>
+                            </div>
+                            <p class="text-xs text-gray-600 mb-1">Total Hari Ini</p>
+                            <p class="text-xl font-bold text-gray-800" id="mobileTotalToday">0</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                        <div class="text-center">
+                            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                                <i class="fas fa-id-card text-green-600 text-lg"></i>
+                            </div>
+                            <p class="text-xs text-gray-600 mb-1">Kependudukan</p>
+                            <p class="text-xl font-bold text-gray-800" id="mobileTotalKependudukan">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                        <div class="text-center">
+                            <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                                <i class="fas fa-certificate text-purple-600 text-lg"></i>
+                            </div>
+                            <p class="text-xs text-gray-600 mb-1">Pencatatan Sipil</p>
+                            <p class="text-xl font-bold text-gray-800" id="mobileTotalSipil">0</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                        <div class="text-center">
+                            <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                                <i class="fas fa-warehouse text-orange-600 text-lg"></i>
+                            </div>
+                            <p class="text-xs text-gray-600 mb-1">Stok Blangko</p>
+                            <p class="text-xl font-bold text-gray-800" id="mobileStokBlangko">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Tab Navigation -->
+            <div class="bg-white border-b border-gray-200 px-4">
+                <div class="flex space-x-1">
+                    <button id="mobileTabKependudukan" class="flex-1 py-3 px-4 text-sm font-medium text-blue-600 border-b-2 border-blue-600 bg-blue-50 rounded-t-lg">
+                        <i class="fas fa-id-card mr-2"></i>Kependudukan
+                    </button>
+                    <button id="mobileTabSipil" class="flex-1 py-3 px-4 text-sm font-medium text-gray-600 border-b-2 border-transparent hover:text-gray-800 rounded-t-lg">
+                        <i class="fas fa-certificate mr-2"></i>Pencatatan Sipil
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Content Sections -->
+            <div class="bg-gray-50 min-h-screen">
+                <!-- Kependudukan Section -->
+                <div id="mobileKependudukanSection" class="px-4 py-4">
+                    <div class="space-y-3">
+                        <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl p-4 text-white">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-blue-100 text-sm mb-1">Kartu Keluarga</p>
+                                    <p class="text-2xl font-bold" id="mobileKK">0</p>
+                                    <div class="flex items-center mt-1">
+                                        <i class="fas fa-arrow-up text-xs mr-1"></i>
+                                        <span class="text-xs text-blue-100">+12% dari kemarin</span>
+                                    </div>
+                                </div>
+                                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-users text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-xl p-4 text-white">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-emerald-100 text-sm mb-1">KTP Elektronik</p>
+                                    <p class="text-2xl font-bold" id="mobileKTP">0</p>
+                                    <div class="flex items-center mt-1">
+                                        <i class="fas fa-arrow-up text-xs mr-1"></i>
+                                        <span class="text-xs text-emerald-100">+8% dari kemarin</span>
+                                    </div>
+                                </div>
+                                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-id-card text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gradient-to-r from-amber-500 to-amber-600 rounded-xl p-4 text-white">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-amber-100 text-sm mb-1">Kartu Identitas Anak</p>
+                                    <p class="text-2xl font-bold" id="mobileKIA">0</p>
+                                    <div class="flex items-center mt-1">
+                                        <i class="fas fa-arrow-up text-xs mr-1"></i>
+                                        <span class="text-xs text-amber-100">+15% dari kemarin</span>
+                                    </div>
+                                </div>
+                                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-child text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-xl p-4 text-white">
+                                <div class="text-center">
+                                    <div class="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center mx-auto mb-2">
+                                        <i class="fas fa-passport text-lg"></i>
+                                    </div>
+                                    <p class="text-indigo-100 text-xs mb-1">SKPWNI</p>
+                                    <p class="text-xl font-bold" id="mobileSKPWNI">0</p>
+                                </div>
+                            </div>
+                            <div class="bg-gradient-to-r from-pink-500 to-pink-600 rounded-xl p-4 text-white">
+                                <div class="text-center">
+                                    <div class="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center mx-auto mb-2">
+                                        <i class="fas fa-globe text-lg"></i>
+                                    </div>
+                                    <p class="text-pink-100 text-xs mb-1">SKDWNI</p>
+                                    <p class="text-xl font-bold" id="mobileSKDWNI">0</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pencatatan Sipil Section -->
+                <div id="mobileSipilSection" class="px-4 py-4 hidden">
+                    <div class="space-y-3">
+                        <div class="bg-gradient-to-r from-teal-500 to-teal-600 rounded-xl p-4 text-white">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-teal-100 text-sm mb-1">Akta Kelahiran</p>
+                                    <p class="text-2xl font-bold" id="mobileAktaLahir">0</p>
+                                    <div class="flex items-center mt-1">
+                                        <i class="fas fa-arrow-up text-xs mr-1"></i>
+                                        <span class="text-xs text-teal-100">+18% dari kemarin</span>
+                                    </div>
+                                </div>
+                                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-baby text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gradient-to-r from-red-500 to-red-600 rounded-xl p-4 text-white">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-red-100 text-sm mb-1">Akta Kematian</p>
+                                    <p class="text-2xl font-bold" id="mobileAktaMati">0</p>
+                                    <div class="flex items-center mt-1">
+                                        <i class="fas fa-minus text-xs mr-1"></i>
+                                        <span class="text-xs text-red-100">-2% dari kemarin</span>
+                                    </div>
+                                </div>
+                                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-cross text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="bg-gradient-to-r from-rose-500 to-rose-600 rounded-xl p-4 text-white">
+                                <div class="text-center">
+                                    <div class="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center mx-auto mb-2">
+                                        <i class="fas fa-heart text-lg"></i>
+                                    </div>
+                                    <p class="text-rose-100 text-xs mb-1">Akta Perkawinan</p>
+                                    <p class="text-xl font-bold" id="mobileAktaKawin">0</p>
+                                </div>
+                            </div>
+                            <div class="bg-gradient-to-r from-slate-500 to-slate-600 rounded-xl p-4 text-white">
+                                <div class="text-center">
+                                    <div class="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center mx-auto mb-2">
+                                        <i class="fas fa-broken-heart text-lg"></i>
+                                    </div>
+                                    <p class="text-slate-100 text-xs mb-1">Akta Perceraian</p>
+                                    <p class="text-xl font-bold" id="mobileAktaCerai">0</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile Blangko Status -->
+                <div class="px-4 pb-4">
+                    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                        <h3 class="text-sm font-bold text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-warehouse text-orange-600 mr-2"></i>
+                            Status Blangko KTP-el
+                        </h3>
+                        <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-3 rounded-lg border border-green-200">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-semibold text-gray-800">Ketersediaan</span>
+                                <span class="text-lg font-bold text-green-700" id="mobileBlangkoKTP">5,240</span>
+                            </div>
+                            <div class="text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full inline-block">
+                                <i class="fas fa-check-circle mr-1"></i>Stok Aman
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-semibold text-gray-700">Penggunaan Hari Ini</span>
+                                <span class="text-sm font-bold text-gray-800" id="mobilePenggunaanHariIni">0</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2 mb-1">
+                                <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-500" id="mobileProgressBar" style="width: 0%"></div>
+                            </div>
+                            <div class="flex justify-between text-xs text-gray-500">
+                                <span>0</span>
+                                <span>Target: 200/hari</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile Bottom Padding -->
+                <div class="h-20"></div>
+            </div>
+
+            <!-- Mobile Bottom Navigation -->
+            <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2 z-40 lg:hidden">
+                <div class="grid grid-cols-3 gap-2">
+                    <button id="mobileInputBtn" class="flex flex-col items-center py-2 px-3 rounded-lg hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-plus-circle text-blue-600 text-lg mb-1"></i>
+                        <span class="text-xs font-medium text-gray-700">Input Data</span>
+                    </button>
+                    <button id="mobileExportBtn" class="flex flex-col items-center py-2 px-3 rounded-lg hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-download text-purple-600 text-lg mb-1"></i>
+                        <span class="text-xs font-medium text-gray-700">Export</span>
+                    </button>
+                    <button id="mobileFilterBtn" class="flex flex-col items-center py-2 px-3 rounded-lg hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-filter text-green-600 text-lg mb-1"></i>
+                        <span class="text-xs font-medium text-gray-700">Filter</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Desktop Layout (unchanged) -->
+        <div class="hidden lg:block">
+            <!-- Filter Cerdas -->
+            <div class="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 mb-6 sm:mb-8 border border-gray-100">
             <div class="mb-4 sm:mb-6">
                 <h3 class="text-lg sm:text-xl font-bold text-gray-800 mb-2">Filter & Kontrol Data</h3>
                 <p class="text-sm sm:text-base text-gray-600">Kelola tampilan data berdasarkan kategori dan periode waktu</p>
@@ -102,7 +502,7 @@
                     <div class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
                         <div class="flex items-center space-x-2">
                             <div class="w-3 h-3 bg-green-500 rounded-full pulse-animation"></div>
-                            <span class="text-xs sm:text-sm font-medium text-green-700">Terhubung ke Google Sheets</span>
+                            <span class="text-xs sm:text-sm font-medium text-yellow-600">Terhubung ke database</span>
                         </div>
                         <div class="hidden sm:block text-sm text-gray-500">|</div>
                         <div class="text-xs sm:text-sm text-gray-600">
@@ -1000,7 +1400,7 @@
                 }
             }
 
-            // Update tampilan dengan null checks
+            // Update tampilan desktop dengan null checks
             safeUpdateElement('kk', currentData.kk);
             safeUpdateElement('ktp', currentData.ktp);
             safeUpdateElement('kia', currentData.kia);
@@ -1013,14 +1413,33 @@
             safeUpdateElement('blangkoKTP', currentData.blangkoKTP.toLocaleString());
             safeUpdateElement('stokBlangko', currentData.blangkoKTP.toLocaleString());
 
+            // Update tampilan mobile dengan null checks
+            safeUpdateElement('mobileKK', currentData.kk);
+            safeUpdateElement('mobileKTP', currentData.ktp);
+            safeUpdateElement('mobileKIA', currentData.kia);
+            safeUpdateElement('mobileSKPWNI', currentData.skpwni);
+            safeUpdateElement('mobileSKDWNI', currentData.skdwni);
+            safeUpdateElement('mobileAktaLahir', currentData.aktaLahir);
+            safeUpdateElement('mobileAktaMati', currentData.aktaMati);
+            safeUpdateElement('mobileAktaKawin', currentData.aktaKawin);
+            safeUpdateElement('mobileAktaCerai', currentData.aktaCerai);
+            safeUpdateElement('mobileBlangkoKTP', currentData.blangkoKTP.toLocaleString());
+
             // Update summary cards
             const totalKependudukan = currentData.kk + currentData.ktp + currentData.kia + currentData.skpwni + currentData.skdwni;
             const totalSipil = currentData.aktaLahir + currentData.aktaMati + currentData.aktaKawin + currentData.aktaCerai;
             const totalToday = totalKependudukan + totalSipil;
 
+            // Update desktop summary
             safeUpdateElement('totalKependudukan', totalKependudukan);
             safeUpdateElement('totalSipil', totalSipil);
             safeUpdateElement('totalToday', totalToday);
+
+            // Update mobile summary
+            safeUpdateElement('mobileTotalKependudukan', totalKependudukan);
+            safeUpdateElement('mobileTotalSipil', totalSipil);
+            safeUpdateElement('mobileTotalToday', totalToday);
+            safeUpdateElement('mobileStokBlangko', currentData.blangkoKTP.toLocaleString());
 
             // Update progress bar dengan null check
             const penggunaan = currentData.ktp;
@@ -1028,10 +1447,16 @@
             const percentage = Math.min((penggunaan / target) * 100, 100);
             
             safeUpdateElement('penggunaanHariIni', penggunaan);
+            safeUpdateElement('mobilePenggunaanHariIni', penggunaan);
             
             const progressBar = document.getElementById('progressBar');
             if (progressBar) {
                 progressBar.style.width = percentage + '%';
+            }
+
+            const mobileProgressBar = document.getElementById('mobileProgressBar');
+            if (mobileProgressBar) {
+                mobileProgressBar.style.width = percentage + '%';
             }
 
             // Update data count
@@ -1465,8 +1890,8 @@
                 switch (status) {
                     case 'connected':
                         statusDot.className = 'w-3 h-3 bg-green-500 rounded-full pulse-animation';
-                        statusText.textContent = 'Terhubung ke Google Sheets';
-                        statusText.className = 'text-xs sm:text-sm font-medium text-green-700';
+                        statusText.textContent = 'Terhubung ke database';
+                        statusText.className = 'text-xs sm:text-sm font-medium text-yellow-600';
                         lastSuccessfulFetch = new Date();
                         break;
                     case 'error':
@@ -1476,7 +1901,7 @@
                         break;
                     case 'connecting':
                         statusDot.className = 'w-3 h-3 bg-yellow-500 rounded-full pulse-animation';
-                        statusText.textContent = 'Menghubungkan ke Google Sheets...';
+                        statusText.textContent = 'Menghubungkan ke database...';
                         statusText.className = 'text-xs sm:text-sm font-medium text-yellow-700';
                         break;
                 }
@@ -1530,10 +1955,206 @@
             };
         }
 
+        // Fungsi untuk update waktu dan tanggal real-time
+        function updateDateTime() {
+            const now = new Date();
+            
+            // Format waktu (HH:MM:SS)
+            const timeString = now.toLocaleTimeString('id-ID', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            });
+            
+            // Format tanggal (DD MMM YYYY)
+            const dateString = now.toLocaleDateString('id-ID', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            });
+            
+            // Update elemen desktop dengan null check
+            const timeElement = document.getElementById('currentTime');
+            const dateElement = document.getElementById('currentDate');
+            
+            if (timeElement) timeElement.textContent = timeString;
+            if (dateElement) dateElement.textContent = dateString;
+            
+            // Update elemen mobile dengan null check
+            const mobileDateTime = document.getElementById('mobileDateTime');
+            if (mobileDateTime) {
+                mobileDateTime.textContent = `${timeString} | ${dateString}`;
+            }
+        }
+
+        // Mobile Tab Navigation
+        function initializeMobileTabs() {
+            const tabKependudukan = document.getElementById('mobileTabKependudukan');
+            const tabSipil = document.getElementById('mobileTabSipil');
+            const sectionKependudukan = document.getElementById('mobileKependudukanSection');
+            const sectionSipil = document.getElementById('mobileSipilSection');
+
+            if (tabKependudukan && tabSipil && sectionKependudukan && sectionSipil) {
+                tabKependudukan.addEventListener('click', function() {
+                    // Update tab states
+                    tabKependudukan.className = 'flex-1 py-3 px-4 text-sm font-medium text-blue-600 border-b-2 border-blue-600 bg-blue-50 rounded-t-lg';
+                    tabSipil.className = 'flex-1 py-3 px-4 text-sm font-medium text-gray-600 border-b-2 border-transparent hover:text-gray-800 rounded-t-lg';
+                    
+                    // Update sections
+                    sectionKependudukan.classList.remove('hidden');
+                    sectionSipil.classList.add('hidden');
+                });
+
+                tabSipil.addEventListener('click', function() {
+                    // Update tab states
+                    tabSipil.className = 'flex-1 py-3 px-4 text-sm font-medium text-blue-600 border-b-2 border-blue-600 bg-blue-50 rounded-t-lg';
+                    tabKependudukan.className = 'flex-1 py-3 px-4 text-sm font-medium text-gray-600 border-b-2 border-transparent hover:text-gray-800 rounded-t-lg';
+                    
+                    // Update sections
+                    sectionSipil.classList.remove('hidden');
+                    sectionKependudukan.classList.add('hidden');
+                });
+            }
+        }
+
+        // Mobile Bottom Navigation
+        function initializeMobileBottomNav() {
+            const mobileInputBtn = document.getElementById('mobileInputBtn');
+            const mobileExportBtn = document.getElementById('mobileExportBtn');
+            const mobileFilterBtn = document.getElementById('mobileFilterBtn');
+            const mobileRefresh = document.getElementById('mobileRefresh');
+
+            if (mobileInputBtn) {
+                mobileInputBtn.addEventListener('click', function() {
+                    openLoginModal();
+                });
+            }
+
+            if (mobileExportBtn) {
+                mobileExportBtn.addEventListener('click', function() {
+                    exportToCSV();
+                });
+            }
+
+            if (mobileFilterBtn) {
+                mobileFilterBtn.addEventListener('click', function() {
+                    showMobileFilterModal();
+                });
+            }
+
+            if (mobileRefresh) {
+                mobileRefresh.addEventListener('click', async function() {
+                    const icon = this.querySelector('i');
+                    icon.classList.add('fa-spin');
+                    
+                    try {
+                        await fetchDataFromSheets();
+                    } catch (error) {
+                        console.error('Mobile refresh failed:', error);
+                        showNotification('Gagal refresh data. Coba lagi dalam beberapa saat.', 'error');
+                    } finally {
+                        setTimeout(() => {
+                            icon.classList.remove('fa-spin');
+                        }, 1000);
+                    }
+                });
+            }
+        }
+
+        // Show Mobile Filter Modal
+        function showMobileFilterModal() {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end justify-center p-0';
+            modal.innerHTML = `
+                <div class="bg-white rounded-t-2xl w-full max-w-md mx-auto transform transition-all duration-300 translate-y-full" id="mobileFilterContent">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-bold text-gray-800">Filter Data</h3>
+                            <button id="closeMobileFilter" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-times text-gray-600"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Filter Tanggal</label>
+                                <select id="mobileFilterDate" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="today">Hari Ini</option>
+                                    <option value="yesterday">Kemarin</option>
+                                    <option value="week">7 Hari Terakhir</option>
+                                    <option value="month">30 Hari Terakhir</option>
+                                </select>
+                            </div>
+                            
+                            <div class="flex space-x-3 pt-4">
+                                <button id="applyMobileFilter" class="flex-1 bg-blue-600 text-white py-3 rounded-lg font-medium">
+                                    Terapkan Filter
+                                </button>
+                                <button id="resetMobileFilter" class="flex-1 bg-gray-100 text-gray-700 py-3 rounded-lg font-medium">
+                                    Reset
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Animate in
+            setTimeout(() => {
+                const content = document.getElementById('mobileFilterContent');
+                if (content) {
+                    content.classList.remove('translate-y-full');
+                }
+            }, 10);
+            
+            // Event listeners
+            document.getElementById('closeMobileFilter').addEventListener('click', () => {
+                closeMobileFilterModal(modal);
+            });
+            
+            document.getElementById('applyMobileFilter').addEventListener('click', () => {
+                const filterValue = document.getElementById('mobileFilterDate').value;
+                document.getElementById('dateFilter').value = filterValue;
+                applyDateFilter();
+                closeMobileFilterModal(modal);
+                showNotification('Filter berhasil diterapkan!', 'success');
+            });
+            
+            document.getElementById('resetMobileFilter').addEventListener('click', () => {
+                document.getElementById('dateFilter').value = 'today';
+                applyDateFilter();
+                closeMobileFilterModal(modal);
+                showNotification('Filter direset ke hari ini!', 'info');
+            });
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeMobileFilterModal(modal);
+                }
+            });
+        }
+
+        function closeMobileFilterModal(modal) {
+            const content = document.getElementById('mobileFilterContent');
+            if (content) {
+                content.classList.add('translate-y-full');
+                setTimeout(() => {
+                    modal.remove();
+                }, 300);
+            }
+        }
+
         // Inisialisasi aplikasi dengan diagnostik
         document.addEventListener('DOMContentLoaded', async function() {
             try {
                 updateConnectionStatus('connecting');
+                
+                // Mulai update waktu real-time
+                updateDateTime();
+                setInterval(updateDateTime, 1000);
                 
                 // Jalankan diagnostik
                 const diagnostics = await runDiagnostics();
@@ -1555,6 +2176,10 @@
                 }
                 
                 addCardAnimations();
+                
+                // Initialize mobile features
+                initializeMobileTabs();
+                initializeMobileBottomNav();
                 
                 // Auto refresh setiap 30 detik dengan error handling yang lebih baik
                 setInterval(async () => {
@@ -1580,6 +2205,11 @@
             // DOM is already loaded
             (async () => {
                 updateConnectionStatus('connecting');
+                
+                // Mulai update waktu real-time
+                updateDateTime();
+                setInterval(updateDateTime, 1000);
+                
                 const diagnostics = await runDiagnostics();
                 
                 try {
@@ -1594,6 +2224,10 @@
                 }
                 
                 addCardAnimations();
+                
+                // Initialize mobile features
+                initializeMobileTabs();
+                initializeMobileBottomNav();
             })();
         }
 
@@ -1606,5 +2240,5 @@
             }
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'985006dd24c15f65',t:'MTc1ODg2MTAzNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98a1be64f334fd89',t:'MTc1OTcxNzg5OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
